@@ -1,9 +1,13 @@
 import express from 'express';
 import mongoose from 'mongoose';
 
-import { registerValidator } from './validations/validations.js';
+import {
+	registerValidator,
+	postCreateValidation,
+} from './validations/validations.js';
 import checkAuth from './utils/checkAuth.js';
 import * as userController from './controllers/userController.js';
+import * as postController from './controllers/postController.js';
 
 // Setting up db
 mongoose
@@ -26,6 +30,21 @@ app.get('/profile', checkAuth, userController.profileInfo);
 
 // Processing register request
 app.post('/auth/register', registerValidator, userController.register);
+
+// Creating post
+app.post('/posts', checkAuth, postCreateValidation, postController.create);
+
+// Getting all posts
+app.get('/posts', postController.getAll);
+
+// Getting one
+app.get('/posts/:id', postController.getOne);
+
+// Updating post
+app.patch('/posts/:id', checkAuth, postController.update);
+
+// Deleting post
+app.delete('/posts/:id', checkAuth, postController.remove);
 
 // Processing 404 request
 app.all('*', (req, res) => {
