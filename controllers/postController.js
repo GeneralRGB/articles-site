@@ -59,9 +59,7 @@ export const remove = async (req, res) => {
 			// 		console.log(err);
 			// 		return res.status(500).json({ message: 'Error while deleting' });
 			// 	}
-
 			// 	if (!doc) return res.status(404).json({ message: 'Post not found' });
-
 			// 	return res.status(200).json({ message: 'success' });
 			// }
 		);

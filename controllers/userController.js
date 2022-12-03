@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
-import { validationResult } from 'express-validator';
 
 import userModel from '../models/user.js';
 
@@ -39,9 +38,6 @@ export const profileInfo = async (req, res) => {
 
 export const register = async (request, response) => {
 	try {
-		const err = validationResult(request);
-		if (!err.isEmpty()) return response.status(401).json(err.errors);
-
 		const password = request.body.password;
 		const sault = await bcrypt.genSalt(10);
 		const hash = bcrypt.hashSync(password, sault);

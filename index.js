@@ -1,13 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
+import multer from 'multer';
 
 import {
 	registerValidator,
 	postCreateValidation,
+	loginValidator,
 } from './validations/validations.js';
-import checkAuth from './utils/checkAuth.js';
-import * as userController from './controllers/userController.js';
-import * as postController from './controllers/postController.js';
+import { postController, userController } from './controllers/index.js';
+import { checkAuth, handleValidationErrors } from './utils/index.js';
 
 // Setting up db
 mongoose
@@ -17,42 +18,89 @@ mongoose
 	.then(() => console.log('Connected to db'))
 	.catch((err) => console.log('Error while connecting to db: ', err));
 
+const storage = multer.diskStorage({
+	destination: (_, __, cb) => {
+		cb(null, 'uploads');
+	},
+	filename: (_, file, cb) => {
+		cb(null, file.originalname);
+	},
+});
+
+const upload = multer({ storage });
+
 const app = express();
 
 // Enabling JSON support
 app.use(express.json());
 
+// Allow to get images from server via link
+app.use('/uploads', express.static('uploads'));
+
 // Processing login request
-app.post('/auth/login', userController.login);
+app.post(
+	'/auth/login',
+	loginValidator,
+	handleValidationErrors,
+	userController.login
+);
 
 // Retrieving profile information
 app.get('/profile', checkAuth, userController.profileInfo);
 
 // Processing register request
-app.post('/auth/register', registerValidator, userController.register);
+app.post(
+	'/auth/register',
+	registerValidator,
+	handleValidationErrors,
+	userController.register
+);
 
 // Creating post
-app.post('/posts', checkAuth, postCreateValidation, postController.create);
+app.post(
+	'/posts',
+	checkAuth,
+	postCreateValidation,
+	handleValidationErrors,
+	postController.create
+);
 
 // Getting all posts
 app.get('/posts', postController.getAll);
 
-// Getting one
+// Getting one post
 app.get('/posts/:id', postController.getOne);
 
 // Updating post
-app.patch('/posts/:id', checkAuth, postController.update);
+app.patch(
+	'/posts/:id',
+	checkAuth,
+	handleValidationErrors,
+	postController.update
+);
 
 // Deleting post
-app.delete('/posts/:id', checkAuth, postController.remove);
+app.delete(
+	'/posts/:id',
+	checkAuth,
+	handleValidationErrors,
+	postController.remove
+);
+
+// Uploading picture
+app.post('/upload', checkAuth, upload.single('image'), (req, res) => {
+	res.json({
+		url: `/uploads/${req.file.originalname}`,
+	});
+});
 
 // Processing 404 request
-app.all('*', (req, res) => {
+app.all('*', (_req, res) => {
 	res.status(404).json({ message: 'Not found' });
 });
 
 // Starting server
 app.listen(3000, (error) => {
 	if (error) return console.log(error);
-	console.log('Server listening on port 3000');
+	console.log('Server is listening on port 3000');
 });
