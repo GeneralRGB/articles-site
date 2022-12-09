@@ -1,6 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import multer from 'multer';
+import cors from 'cors';
 
 import {
 	registerValidator,
@@ -30,6 +31,9 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 const app = express();
+
+// Disable cors
+app.use(cors());
 
 // Enabling JSON support
 app.use(express.json());
@@ -100,7 +104,7 @@ app.all('*', (_req, res) => {
 });
 
 // Starting server
-app.listen(3000, (error) => {
+app.listen(4444, (error) => {
 	if (error) return console.log(error);
-	console.log('Server is listening on port 3000');
+	console.log('Server is listening on port 4444');
 });
