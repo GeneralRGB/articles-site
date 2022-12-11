@@ -72,6 +72,9 @@ app.post(
 // Getting all posts
 app.get('/posts', postController.getAll);
 
+// Getting last tags
+app.get('/tags', postController.getLastTags);
+
 // Getting one post
 app.get('/posts/:id', postController.getOne);
 

@@ -20,6 +20,21 @@ export const create = async (req, res) => {
 	}
 };
 
+export const getLastTags = async (req, res) => {
+	try {
+		const posts = await PostSchema.find().limit(5);
+		const tags = posts
+			.map((post) => post.tags)
+			.flat()
+			.slice(0, 5)
+			.filter((post, index, self) => self.indexOf(post) === index);
+		return res.status(200).json(tags);
+	} catch (err) {
+		console.log(err);
+		return res.status(500).json({ message: 'Server error!!!' });
+	}
+};
+
 export const getAll = async (req, res) => {
 	try {
 		const post = await PostSchema.find().populate('author');
