@@ -27,6 +27,7 @@ const postsSlice = createSlice({
 	initialState,
 	reducer: {},
 	extraReducers: {
+		// Fetching posts
 		[fetchPosts.pending]: (state) => {
 			state.posts.status = 'pending';
 		},
@@ -34,10 +35,11 @@ const postsSlice = createSlice({
 			state.posts.items = actions.payload;
 			state.posts.status = 'fulfilled';
 		},
-		[fetchPosts.rejected]: (state, actions) => {
+		[fetchPosts.rejected]: (state) => {
 			state.posts.items = [];
 			state.posts.status = 'rejected';
 		},
+		// Fetching tags
 		[fetchTags.pending]: (state) => {
 			state.tags.status = 'pending';
 		},
@@ -45,7 +47,7 @@ const postsSlice = createSlice({
 			state.tags.items = actions.payload;
 			state.tags.status = 'fulfilled';
 		},
-		[fetchTags.rejected]: (state, actions) => {
+		[fetchTags.rejected]: (state) => {
 			state.tags.items = [];
 			state.tags.status = 'rejected';
 		},
