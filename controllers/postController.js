@@ -6,7 +6,7 @@ export const create = async (req, res) => {
 			title: req.body.title,
 			text: req.body.text,
 			imageUrl: req.body.imageUrl,
-			tags: req.body.tags,
+			tags: req.body.tags.replace(' ', '').split(','),
 			author: req.userId,
 		});
 		const post = await doc.save();
@@ -94,9 +94,9 @@ export const update = async (req, res) => {
 			{
 				title: req.body.title,
 				text: req.body.text,
-				imgUrl: req.body.imgUrl,
+				imageUrl: req.body.imageUrl,
 				author: req.body.author,
-				tags: req.body.tags,
+				tags: req.body.tags.replace(' ', '').split(','),
 			}
 		);
 		return res.status(200).json({ status: 'success' });
