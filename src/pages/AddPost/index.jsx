@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import SimpleMDE from 'react-simplemde-editor';
-import { Navigate } from 'react-router-dom';
+import { useNavigate, Navigate, useParams } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 import { selectIsAuth } from '../../redux/slices/auth';
@@ -13,12 +13,17 @@ import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
 
 export const AddPost = () => {
+	const { id } = useParams();
+	const navigate = useNavigate();
 	const isAuth = useSelector(selectIsAuth);
 
 	const [title, setTitle] = React.useState('');
 	const [tags, setTags] = React.useState('');
 	const [text, setText] = React.useState('');
 	const [imageUrl, setImageUrl] = React.useState('');
+	const [loading, setIsLoading] = React.useState(false);
+
+	const isEditing = Boolean(id);
 
 	const inputFileRef = React.useRef(null);
 
@@ -36,8 +41,39 @@ export const AddPost = () => {
 		}
 	};
 
+	React.useEffect(() => {
+		if (id) {
+			axios.get(`/posts/${id}`).then(({ data }) => {
+				setTitle(data.title);
+				setTags(data.tags.join(', '));
+				setText(data.text);
+				setImageUrl(data.imageUrl);
+			});
+		}
+	}, [id]);
+
 	const onClickRemoveImage = () => {
 		setImageUrl('');
+	};
+
+	const onSubmit = async () => {
+		try {
+			setIsLoading(true);
+			const fields = {
+				title,
+				tags,
+				imageUrl,
+				text,
+			};
+			const { data } = isEditing
+				? await axios.patch(`/posts/${id}`, fields)
+				: await axios.post('/posts', fields);
+			const _id = isEditing ? id : data._id;
+			navigate(`/posts/${_id}`);
+		} catch (err) {
+			console.warn(err);
+			alert('Ошибка при создании статьи!');
+		}
 	};
 
 	const onChange = React.useCallback((value) => {
@@ -119,8 +155,8 @@ export const AddPost = () => {
 				options={options}
 			/>
 			<div className={styles.buttons}>
-				<Button size="large" variant="contained">
-					Опубликовать
+				<Button onClick={onSubmit} size="large" variant="contained">
+					{isEditing ? 'Сохранить' : 'Опубликовать'}
 				</Button>
 				<a href="/">
 					<Button size="large">Отмена</Button>
