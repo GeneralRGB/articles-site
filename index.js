@@ -107,7 +107,7 @@ app.all('*', (_req, res) => {
 });
 
 // Starting server
-app.listen(4444, (error) => {
+app.listen(process.env.PORT || 3030, (error) => {
 	if (error) return console.log(error);
 	console.log('Server is listening on port 4444');
 });
