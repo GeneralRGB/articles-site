@@ -7,7 +7,7 @@ import { useNavigate, Navigate, useParams } from 'react-router-dom';
 
 import { useSelector } from 'react-redux';
 import { selectIsAuth } from '../../redux/slices/auth';
-import axios from '../../axios';
+import axios, { API_URL } from '../../axios';
 
 import 'easymde/dist/easymde.min.css';
 import styles from './AddPost.module.scss';
@@ -21,6 +21,7 @@ export const AddPost = () => {
 	const [tags, setTags] = React.useState('');
 	const [text, setText] = React.useState('');
 	const [imageUrl, setImageUrl] = React.useState('');
+	// eslint-disable-next-line no-unused-vars
 	const [loading, setIsLoading] = React.useState(false);
 
 	const isEditing = Boolean(id);
@@ -125,7 +126,7 @@ export const AddPost = () => {
 					</Button>
 					<img
 						className={styles.image}
-						src={`http://localhost:4444${imageUrl}`}
+						src={`${API_URL}${imageUrl}`}
 						alt="Uploaded"
 					/>
 				</>

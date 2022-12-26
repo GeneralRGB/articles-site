@@ -8,6 +8,7 @@ import { Post } from '../components/Post';
 import { TagsBlock } from '../components/TagsBlock';
 import { CommentsBlock } from '../components/CommentsBlock';
 import { fetchPosts, fetchTags } from '../redux/slices/posts';
+import { API_URL } from '../axios';
 
 export const Home = () => {
 	const dispatch = useDispatch();
@@ -40,9 +41,7 @@ export const Home = () => {
 							<Post
 								id={el._id}
 								title={el.title}
-								imageUrl={
-									el.imageUrl ? `http://localhost:4444${el.imageUrl}` : ''
-								}
+								imageUrl={el.imageUrl ? `${API_URL}${el.imageUrl}` : ''}
 								user={el.author}
 								createdAt={el.createdAt}
 								viewsCount={el.viewsCount}
